@@ -7,10 +7,11 @@ from ResourceModules.BlockStorage import *
 
 ########## Configuration ####################
 # Specify your config file location
-config_file_path = r"C:\Users\SQREDDY\.oci\conf_national02"
+#for Linux
+config_file_path = "~/.oci/config"
 
 # Specify the DEFAULT compartment OCID that you want to delete, Leave Empty for no default
-startcomp = "ocid1.compartment.oc1..aaaaaaaallv5ilbokc7lom5jynp5dxaf7kurhakrval3wzjpwsnff2ymx5kq"
+startcomp = ""
 #############################################
 
 try:
@@ -31,7 +32,6 @@ if startcomp =="":
 
 config = oci.config.from_file(config_file_path)
 
-# startcomp="ocid1.compartment.oc1..aaaaaaaallv5ilbokc7lom5jynp5dxaf7kurhakrval3wzjpwsnff2ymx5kq"
 
 print ("\n--[ Login check and getting all compartments from root compartment ]--")
 compartments = Login(config,startcomp)
@@ -47,23 +47,26 @@ for compartment in compartments:
         processCompartments.append(compartment)
         print (compartment.name)
 
-for region in regions:
-    config["region"]=region
+confirm = input ("\ntype yes to delete expired resources from these compartments: ")
 
-    print ("\n--[ Deleting Auto Scaling Configurations ]--")
-    DeleteAutoScalingConfigurations(config, processCompartments)
+if confirm == "yes":        
+    for region in regions:
+        config["region"]=region
 
-    print ("\n--[ Deleting Compute Instances ]--")
-    DeleteInstancePools(config,processCompartments)
-    DeleteInstanceConfigs(config, processCompartments)
-    DeleteInstances(config,processCompartments)
-    DeleteImages(config, processCompartments)
-    DeleteBootVolumes(config, processCompartments)
-    DeleteBootVolumesBackups(config, processCompartments)
-    DeleteDedicatedVMHosts(config, processCompartments)
+        print ("\n--[ Deleting Auto Scaling Configurations ]--")
+        DeleteAutoScalingConfigurations(config, processCompartments)
 
-    print ("\n--[ Deleting Block Volumes ]--")
-    DeleteVolumeGroups(config, processCompartments)
-    DeleteVolumeGroupBackups(config, processCompartments)
-    DeleteVolumes(config, processCompartments)
-    DeleteBlockVolumesBackups(config, processCompartments)
+        print ("\n--[ Deleting Compute Instances ]--")
+        DeleteInstancePools(config,processCompartments)
+        DeleteInstanceConfigs(config, processCompartments)
+        DeleteInstances(config,processCompartments)
+        DeleteImages(config, processCompartments)
+        DeleteBootVolumes(config, processCompartments)
+        DeleteBootVolumesBackups(config, processCompartments)
+        DeleteDedicatedVMHosts(config, processCompartments)
+
+        print ("\n--[ Deleting Block Volumes ]--")
+        DeleteVolumeGroups(config, processCompartments)
+        DeleteVolumeGroupBackups(config, processCompartments)
+        DeleteVolumes(config, processCompartments)
+        DeleteBlockVolumesBackups(config, processCompartments)
